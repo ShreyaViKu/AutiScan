@@ -2,36 +2,33 @@
 <html>
 <head>
 <title>Autism Screening</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css">
+
 </head>
-<body>
+<body class="bg-gradient">
 
-<header>
-<h1>🧠 Autism Screening Questionnaire</h1>
-<p>For children</p>
-</header>
+<div class="container mt-5 mb-5">
 
-<nav>
-<a href="/">Home</a>
-<a href="/awareness">Awareness</a>
-<a href="/doctors">Doctors</a>
-</nav>
+<div class="text-center mb-4">
+<h1 class="fw-bold text-primary">🧠 Autism Screening Tool</h1>
+<p class="text-muted">Answer honestly based on your child’s daily behavior</p>
+</div>
 
-<div class="container">
-<form action="/predict" method="post" class="card">
+<form action="/predict" method="post">
 
-<h2>📝 How often does your child show the following behaviors?</h2>
-<p>Select the option that best describes your child.</p>
+<div class="card shadow-lg p-4 rounded-4">
 
-<hr>
+<h4 class="mb-3 text-secondary">
+<i class="bi bi-list-check"></i> Behavior Questionnaire
+</h4>
 
-<!-- Helper text -->
-<p style="font-size:14px;color:gray;">
-Never / Rarely → Not commonly observed  
-Often / Very Often → Frequently observed
-</p>
+<div class="progress mb-4">
+<div class="progress-bar bg-primary" style="width: 100%">10 Questions</div>
+</div>
 
-<!-- QUESTIONS -->
 {% set options = [
 ("0","Never"),
 ("0","Rarely"),
@@ -39,95 +36,88 @@ Often / Very Often → Frequently observed
 ("1","Very Often")
 ] %}
 
-<p><b>1. Difficulty in making eye contact</b></p>
-{% for val,text in options %}
-<input type="radio" name="q1" value="{{val}}" required> {{text}}
-{% endfor %}
+{% for i,text in [
+(1,"Difficulty making eye contact"),
+(2,"Prefers playing alone"),
+(3,"Difficulty understanding others’ emotions"),
+(4,"Upset by changes in routine"),
+(5,"Repeats words or actions"),
+(6,"Difficulty starting conversations"),
+(7,"Limited interest in sharing enjoyment"),
+(8,"Sensitive to sounds or textures"),
+(9,"Difficulty with imaginative play"),
+(10,"Feels overwhelmed in social situations")
+] %}
 
-<p><b>2. Prefers playing alone</b></p>
-{% for val,text in options %}
-<input type="radio" name="q2" value="{{val}}" required> {{text}}
-{% endfor %}
+<div class="question-box mb-4">
+<p class="fw-semibold">{{ i }}. {{ text }}</p>
 
-<p><b>3. Difficulty understanding others’ feelings</b></p>
-{% for val,text in options %}
-<input type="radio" name="q3" value="{{val}}" required> {{text}}
+<div class="d-flex flex-wrap gap-3">
+{% for val,label in options %}
+<label class="option-card">
+<input type="radio" name="q{{i}}" value="{{val}}" required>
+<span>{{ label }}</span>
+</label>
 {% endfor %}
+</div>
+</div>
 
-<p><b>4. Gets upset by small routine changes</b></p>
-{% for val,text in options %}
-<input type="radio" name="q4" value="{{val}}" required> {{text}}
-{% endfor %}
-
-<p><b>5. Repeats words or actions frequently</b></p>
-{% for val,text in options %}
-<input type="radio" name="q5" value="{{val}}" required> {{text}}
-{% endfor %}
-
-<p><b>6. Difficulty starting conversations</b></p>
-{% for val,text in options %}
-<input type="radio" name="q6" value="{{val}}" required> {{text}}
-{% endfor %}
-
-<p><b>7. Limited interest in sharing enjoyment</b></p>
-{% for val,text in options %}
-<input type="radio" name="q7" value="{{val}}" required> {{text}}
-{% endfor %}
-
-<p><b>8. Sensitive to sounds, textures, or lights</b></p>
-{% for val,text in options %}
-<input type="radio" name="q8" value="{{val}}" required> {{text}}
-{% endfor %}
-
-<p><b>9. Difficulty with imaginative play</b></p>
-{% for val,text in options %}
-<input type="radio" name="q9" value="{{val}}" required> {{text}}
-{% endfor %}
-
-<p><b>10. Finds social situations overwhelming</b></p>
-{% for val,text in options %}
-<input type="radio" name="q10" value="{{val}}" required> {{text}}
 {% endfor %}
 
 <hr>
 
-<h3>👶 Child Information</h3>
+<h5 class="text-secondary mt-4">
+<i class="bi bi-person-heart"></i> Child Information
+</h5>
 
-<p><b>Child’s Age Group:</b></p>
-<select name="age" required>
-<option value="">-- Select Age Group --</option>
+<div class="row mt-3">
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Age Group</label>
+<select class="form-select" name="age" required>
+<option value="">Select</option>
 <option value="4">Below 5 years</option>
 <option value="6">Between 5–8 years</option>
 <option value="9">Above 8 years</option>
 </select>
+</div>
 
-<p><b>Gender:</b></p>
-<select name="gender">
+<div class="col-md-6 mb-3">
+<label class="form-label">Gender</label>
+<select class="form-select" name="gender">
 <option value="1">Male</option>
 <option value="0">Female</option>
 </select>
-
-<p><b>Jaundice at birth?</b></p>
-<select name="jundice">
-<option value="1">Yes</option>
-<option value="0">No</option>
-</select>
-
-<p><b>Family history of Autism?</b></p>
-<select name="austim">
-<option value="1">Yes</option>
-<option value="0">No</option>
-</select>
-
-<br><br>
-<button type="submit">Get Screening Result</button>
-
-</form>
 </div>
 
-<footer>
-This tool is for early screening and awareness only, not diagnosis.
-</footer>
+<div class="col-md-6 mb-3">
+<label class="form-label">Jaundice at birth</label>
+<select class="form-select" name="jundice">
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Family history of Autism</label>
+<select class="form-select" name="austim">
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+</div>
+
+</div>
+
+<div class="text-center mt-4">
+<button class="btn btn-primary btn-lg px-5 rounded-pill">
+<i class="bi bi-graph-up"></i> View Result
+</button>
+</div>
+
+</div>
+</form>
+
+</div>
 
 </body>
 </html>

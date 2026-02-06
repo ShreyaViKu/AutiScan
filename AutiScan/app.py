@@ -2,7 +2,8 @@ from flask import Flask, render_template, request
 import pickle
 
 app = Flask(__name__)
-model = pickle.load(open("model/autism_model.pkl", "rb"))
+lr_model, nn_model = pickle.load(open("model/autism_model.pkl", "rb"))
+
 
 @app.route('/')
 def home():
@@ -16,20 +17,21 @@ def screening():
 def predict():
     data = []
 
-    # AQ-10 answers (already mapped to 0/1 from form)
     for i in range(1, 11):
         data.append(float(request.form[f"q{i}"]))
 
-    # Age group mapped to numeric age
-    data.append(float(request.form['age']))
+    data.append(float(request.form["age"]))
+    data.append(float(request.form["gender"]))
+    data.append(float(request.form["jundice"]))
+    data.append(float(request.form["austim"]))
 
-    # Other details
-    data.append(float(request.form['gender']))
-    data.append(float(request.form['jundice']))
-    data.append(float(request.form['austim']))
+    # AI Ensemble prediction
+    lr_prob = lr_model.predict_proba([data])[0][1]
+    nn_prob = nn_model.predict_proba([data])[0][1]
 
-    prob = model.predict_proba([data])[0][1]
-    percent = round(prob * 100, 2)
+    final_prob = (lr_prob + nn_prob) / 2
+    percent = round(final_prob * 100, 2)
+
     aq_score = sum(data[:10])
 
     if percent < 30:
@@ -39,12 +41,16 @@ def predict():
     else:
         spectrum = "High Risk"
 
+    confidence = round(abs(final_prob - 0.5) * 200, 2)
+
     return render_template(
         "result.html",
         percent=percent,
         spectrum=spectrum,
-        aq_score=aq_score
+        aq_score=aq_score,
+        confidence=confidence
     )
+
 
 @app.route('/awareness')
 def awareness():
